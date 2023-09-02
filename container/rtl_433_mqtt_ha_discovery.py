@@ -48,7 +48,6 @@ def on_message(client, userdata, msg):
 
 
 RTL_433_RETAIN = os.getenv("RTL_433_RETAIN", False)
-# Append 'force_update = true' to all configs.
 RTL_433_FORCE_UPDATE = os.getenv("RTL_433_FORCE_UPDATE", False)
 RTL_433_MQTT_TOPIC = os.getenv(
     "RTL_433_MQTT_TOPIC",
@@ -58,11 +57,8 @@ RTL_433_DEVICE_TOPIC_SUFFIX = os.getenv(
     "RTL_433_DEVICE_TOPIC_SUFFIX",
     "devices[/type][/model][/subtype][/channel][/id]",
 )
-# Interval to republish config topics in seconds
 RTL_433_INTERVAL = int(os.getenv("RTL_433_INTERVAL", 600))
 RTL_433_EXPIRE_AFTER = int(os.getenv("RTL_433_EXPIRE_AFTER", 0))
-# ID's of devices that will be discovered (omit for all)
-# Comma sep.
 RTL_433_IDS = os.getenv("RTL_433_IDS", "").split(",")
 
 MQTT_BROKER = os.getenv("MQTT_BROKER", default="mqtt")

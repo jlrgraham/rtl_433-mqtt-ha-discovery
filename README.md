@@ -3,6 +3,7 @@
 Respond to `rtl_433` data published to an MQTT broker and create the corresponding [Home Assistant](https://www.home-assistant.io/) via [MQTT Discovery](https://www.home-assistant.io/docs/mqtt/discovery/) entries.
 
 Based on:
+
 * [https://github.com/merbanan/rtl_433/blob/master/examples/rtl_433_mqtt_hass.py](https://github.com/merbanan/rtl_433/blob/master/examples/rtl_433_mqtt_hass.py)
 * [https://github.com/zacs/rtl_433_ha_autodiscovery/tree/main](https://github.com/zacs/rtl_433_ha_autodiscovery/tree/main)
 
@@ -47,13 +48,19 @@ All settings are taken from environmental variables at runtime.
 
 | Variable | Description | Default |
 | -------- | ----------- | ------- |
-| `OPENEVSE_ANNOUNCE_MQTT_PREFIX` | The prefix under which OpenEVSE device(s) publish data. | `openevse/announce` |
 | `MQTT_BROKER` | The hostname or IP of the MQTT broker. | `mqtt` |
 | `MQTT_PORT` | The connection port on the MQTT broker.  If set to 8883 TLS is automatically used. | 8883 |
 | `MQTT_CLIENT_ID` | The client name given to the MQTT broker.  See MQTT Connections for more details. | `rtl_433-mqtt-ha-discovery ` |
 | `MQTT_USERNAME` | The username for the MQTT broker. | `None` |
 | `MQTT_PASSWORD` | The password for the MQTT broker. | `None` |
 | `HA_DISCOVERY_PREFIX` | The configured Home Assistant discovery prefix. | `homeassistant` |
+| `RTL_433_MQTT_TOPIC` | The prefix under which `rtl_433` publish data. | `rtl_433/+/events` |
+| `RTL_433_DEVICE_TOPIC_SUFFIX` | The MQTT pattern `rtl_433` publishes to. | `devices[/type][/model][/subtype][/channel][/id]` |
+| `RTL_433_INTERVAL` | The publish interval in seconds. | 600 |
+| `RTL_433_EXPIRE_AFTER` | Set the `expire_after` field on published devices. | 0 |
+| `RTL_433_RETAIN` | Controls if published messages are retained. | False |
+| `RTL_433_FORCE_UPDATE` | Append `force_update = true` to all configs. | False |
+| `RTL_433_IDS` | A comma seperated string of device IDs to publish for.  Empty for all. | `None` |
 
 
 ### MQTT Connections
@@ -72,11 +79,9 @@ If the MQTT broker port configuration is set to 8883 then the connector will aut
 
 ### MQTT Topics
 
-There are two topic configuration controls: `OPENEVSE_ANNOUNCE_MQTT_PREFIX` and `HA_DISCOVERY_PREFIX`.
+There are two primary topic configuration controls: `RTL_433_MQTT_TOPIC ` and `HA_DISCOVERY_PREFIX`.
 
-The `OPENEVSE_ANNOUNCE_MQTT_PREFIX` setting will control the top level prefix in MQTT used for OpenEVSE data.  This will result in a subscription to `<OPENEVSE_ANNOUNCE_MQTT_PREFIX>/+` (looking for published events of the form `openevse/announce/abcd` where `abcd` is the truncaed OpenEVSE device ID).
-
-**NB:** To accomodate multiple OpenEVSE devices, the MQTT "Base-topic" setting *on the OpenEVSE* should be set to something like `openevse/openevse-abcd`. 
+The `RTL_433_MQTT_TOPIC ` setting will control the subscription in MQTT used for `rtl_433` data.
 
 The `HA_DISCOVERY_PREFIX` setting should match [discovery prefix setting](https://www.home-assistant.io/docs/mqtt/discovery/#discovery_prefix) in Home Assistant.
 
