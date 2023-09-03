@@ -63,7 +63,7 @@ RTL_433_IDS = os.getenv("RTL_433_IDS", "").split(",")
 
 MQTT_BROKER = os.getenv("MQTT_BROKER", default="mqtt")
 MQTT_PORT = os.getenv("MQTT_PORT", default=8883)
-MQTT_CLIENT_ID = os.getenv("MQTT_CLIENT_ID", default=f"openevse-mqtt-ha-discovery")
+MQTT_CLIENT_ID = os.getenv("MQTT_CLIENT_ID", default=f"rtl_433-mqtt-ha-discovery")
 MQTT_USERNAME = os.getenv("MQTT_USERNAME", default=None)
 MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", default=None)
 
