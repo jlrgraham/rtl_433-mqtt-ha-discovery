@@ -44,7 +44,7 @@ def on_message(client, userdata, msg):
         bridge_event_to_hass(client, topicprefix, data)
 
     except json.decoder.JSONDecodeError:
-        logging.error("JSON decode error: " + msg.payload.decode("utf-8"))
+        logger.error("JSON decode error: " + msg.payload.decode("utf-8"))
 
 
 RTL_433_RETAIN = os.getenv("RTL_433_RETAIN", False)
@@ -686,7 +686,7 @@ def publish_config(mqttc, topic, model, object_id, mapping, key=None):
     now = time.time()
     if path in discovery_timeouts:
         if discovery_timeouts[path] > now:
-            logging.debug("Discovery timeout in the future for: " + path)
+            logger.debug("Discovery timeout in the future for: " + path)
             return False
 
     discovery_timeouts[path] = now + RTL_433_INTERVAL
@@ -719,9 +719,9 @@ def publish_config(mqttc, topic, model, object_id, mapping, key=None):
     if RTL_433_EXPIRE_AFTER > 0:
         config["expire_after"] = RTL_433_EXPIRE_AFTER
 
-    logging.debug(path + ":" + json.dumps(config))
+    logger.debug(path + ":" + json.dumps(config))
 
-    mqttc.publish(path, json.dumps(config), retain=args.retain)
+    mqttc.publish(path, json.dumps(config), retain=RTL_433_RETAIN)
 
     return True
 
@@ -730,8 +730,7 @@ def bridge_event_to_hass(mqttc, topic_prefix, data):
     """Translate some rtl_433 sensor data to Home Assistant auto discovery."""
 
     if "model" not in data:
-        # not a device event
-        logging.debug("Model is not defined. Not sending event to Home Assistant.")
+        logger.debug("Model is not defined. Not publishing HA discovery messages.")
         return
 
     model = sanitize(data["model"])
@@ -766,10 +765,10 @@ def bridge_event_to_hass(mqttc, topic_prefix, data):
                 published_keys.append("secret_knock")
 
     if published_keys:
-        logging.info("Published %s: %s" % (device_id, ", ".join(published_keys)))
+        logger.info(f"Published {device_id}: {published_keys}")
 
         if skipped_keys:
-            logging.info("Skipped %s: %s" % (device_id, ", ".join(skipped_keys)))
+            logger.info(f"Skipped {device_id}: {skipped_keys}")
 
 
 def run():
@@ -793,9 +792,9 @@ def run():
     client.connect(MQTT_BROKER, MQTT_PORT, 60)
 
     if len(RTL_433_IDS) > 0:
-        logger.info(f"Only discovering devices with ids: [{', '.join(RTL_433_IDS)}]")
+        logger.info(f"Only discovering devices with ids: {RTL_433_IDS}")
     else:
-        logger.info(f"Discovering all devices.")
+        logger.info("Discovering all devices.")
 
     client.loop_forever()
 
