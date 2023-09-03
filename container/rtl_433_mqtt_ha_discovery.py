@@ -741,11 +741,13 @@ def bridge_event_to_hass(mqttc, topic_prefix, data):
     base_topic, device_id = rtl_433_device_info(data, topic_prefix)
     if not device_id:
         # no unique device identifier
-        logging.warning("No suitable identifier found for model: ", model)
+        logger.warning(f"No suitable identifier found for model: {model}")
         return
 
-    if len(RTL_433_IDS) > 0 and "id" in data and data.get("id") not in RTL_433_IDS:
-        logging.debug("Device (%s) is not in the desired list of device ids.")
+    data_id = str(data.get("id", None))
+
+    if len(RTL_433_IDS) > 0 and data_id not in RTL_433_IDS:
+        logger.debug(f"Device ({data_id}) is not in the desired list of device ids.")
         return
 
     # detect known attributes
