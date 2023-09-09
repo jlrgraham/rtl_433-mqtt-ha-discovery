@@ -47,8 +47,10 @@ def on_message(client, userdata, msg):
         logger.error("JSON decode error: " + msg.payload.decode("utf-8"))
 
 
-RTL_433_RETAIN = os.getenv("RTL_433_RETAIN", False)
-RTL_433_FORCE_UPDATE = os.getenv("RTL_433_FORCE_UPDATE", False)
+BOOL_TRUES = ["true", "yes", "1"]
+
+RTL_433_RETAIN = os.getenv("RTL_433_RETAIN", "false").lower() in BOOL_TRUES
+RTL_433_FORCE_UPDATE = os.getenv("RTL_433_FORCE_UPDATE", "false").lower() in BOOL_TRUES
 RTL_433_MQTT_TOPIC = os.getenv(
     "RTL_433_MQTT_TOPIC",
     "rtl_433/+/events",
