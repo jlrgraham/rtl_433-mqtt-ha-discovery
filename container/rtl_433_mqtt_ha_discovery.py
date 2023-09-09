@@ -672,7 +672,7 @@ def rtl_433_device_info(data, topic_prefix):
     return (f"{topic_prefix}/{path}", id)
 
 
-def publish_config(mqttc, topic, model, object_id, mapping, key=None):
+def publish_config(client, topic, model, object_id, mapping, key=None):
     """Publish Home Assistant auto discovery data."""
     global discovery_timeouts
 
@@ -680,7 +680,7 @@ def publish_config(mqttc, topic, model, object_id, mapping, key=None):
     object_suffix = mapping["object_suffix"]
     object_name = "-".join([object_id, object_suffix])
 
-    path = "/".join(
+    discovery_topic = "/".join(
         [HA_DISCOVERY_PREFIX, device_type, object_id, object_name, "config"]
     )
 
@@ -708,6 +708,7 @@ def publish_config(mqttc, topic, model, object_id, mapping, key=None):
         config["state_topic"] = topic
         config["unique_id"] = object_name
         config["name"] = readable_name
+
     config["device"] = {
         "identifiers": [object_id],
         "name": object_id,
@@ -723,12 +724,19 @@ def publish_config(mqttc, topic, model, object_id, mapping, key=None):
 
     logger.debug(path + ":" + json.dumps(config))
 
-    mqttc.publish(path, json.dumps(config), retain=RTL_433_RETAIN)
+    (result, mid) = client.publish(
+        discovery_topic, json.dumps(config), retain=RTL_433_RETAIN
+    )
+    if result != 0:
+        logger.error(
+            f"MQTT: Error publishing discovery, result: {result}, topic: {discovery_topic}"
+        )
+        return False
 
     return True
 
 
-def bridge_event_to_hass(mqttc, topic_prefix, data):
+def bridge_event_to_hass(client, topic_prefix, data):
     """Translate some rtl_433 sensor data to Home Assistant auto discovery."""
 
     if "model" not in data:
@@ -756,7 +764,7 @@ def bridge_event_to_hass(mqttc, topic_prefix, data):
     for key in data.keys():
         if key in mappings:
             topic = "/".join([base_topic, key])
-            if publish_config(mqttc, topic, model, device_id, mappings[key], key):
+            if publish_config(client, topic, model, device_id, mappings[key], key):
                 published_keys.append(key)
         else:
             if key not in SKIP_KEYS:
@@ -765,7 +773,7 @@ def bridge_event_to_hass(mqttc, topic_prefix, data):
     if "secret_knock" in data.keys():
         for m in secret_knock_mappings:
             topic = "/".join([base_topic, "secret_knock"])
-            if publish_config(mqttc, topic, model, device_id, m, "secret_knock"):
+            if publish_config(client, topic, model, device_id, m, "secret_knock"):
                 published_keys.append("secret_knock")
 
     if published_keys:
