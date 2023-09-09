@@ -722,7 +722,9 @@ def publish_config(client, topic, model, object_id, mapping, key=None):
     if RTL_433_EXPIRE_AFTER > 0:
         config["expire_after"] = RTL_433_EXPIRE_AFTER
 
-    logger.debug(f"{discovery_topic} : {json.dumps(config)}")
+    logger.debug(
+        f"discovery_topic={discovery_topic}, retain={RTL_433_RETAIN}, data={json.dumps(config)}"
+    )
 
     (result, mid) = client.publish(
         discovery_topic, json.dumps(config), retain=RTL_433_RETAIN
