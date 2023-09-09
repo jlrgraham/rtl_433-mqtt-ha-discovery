@@ -54,6 +54,7 @@ All settings are taken from environmental variables at runtime.
 | `MQTT_USERNAME` | The username for the MQTT broker. | `None` |
 | `MQTT_PASSWORD` | The password for the MQTT broker. | `None` |
 | `HA_DISCOVERY_PREFIX` | The configured Home Assistant discovery prefix. | `homeassistant` |
+| `LOG_LEVEL` | An integer to set the log level. | 20 (`INFO`) |
 | `RTL_433_MQTT_TOPIC` | The prefix under which `rtl_433` publish data. | `rtl_433/+/events` |
 | `RTL_433_DEVICE_TOPIC_SUFFIX` | The MQTT pattern `rtl_433` publishes to. | `devices[/type][/model][/subtype][/channel][/id]` |
 | `RTL_433_INTERVAL` | The publish interval in seconds. | 600 |

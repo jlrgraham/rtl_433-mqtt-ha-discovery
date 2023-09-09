@@ -18,7 +18,6 @@ log_formatter = logging.Formatter(
 )
 log_handler.setFormatter(log_formatter)
 logger.addHandler(log_handler)
-logger.setLevel(logging.INFO)
 
 
 def on_connect(client, userdata, flags, rc):
@@ -71,6 +70,8 @@ MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", default=None)
 
 HA_DISCOVERY_PREFIX = os.getenv("HA_DISCOVERY_PREFIX", "homeassistant")
 
+LOG_LEVEL = int(os.getenv("LOG_LEVEL", default=logging.INFO))
+logger.setLevel(LOG_LEVEL)
 
 discovery_timeouts = {}
 
