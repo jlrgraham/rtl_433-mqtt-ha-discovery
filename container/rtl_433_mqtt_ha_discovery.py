@@ -686,12 +686,12 @@ def publish_config(client, topic, model, object_id, mapping, key=None):
 
     # check timeout
     now = time.time()
-    if path in discovery_timeouts:
-        if discovery_timeouts[path] > now:
-            logger.debug("Discovery timeout in the future for: " + path)
+    if discovery_topic in discovery_timeouts:
+        if discovery_timeouts[discovery_topic] > now:
+            logger.debug(f"Discovery timeout in the future for: {discovery_topic}")
             return False
 
-    discovery_timeouts[path] = now + RTL_433_INTERVAL
+    discovery_timeouts[discovery_topic] = now + RTL_433_INTERVAL
 
     config = mapping["config"].copy()
 
@@ -722,7 +722,7 @@ def publish_config(client, topic, model, object_id, mapping, key=None):
     if RTL_433_EXPIRE_AFTER > 0:
         config["expire_after"] = RTL_433_EXPIRE_AFTER
 
-    logger.debug(path + ":" + json.dumps(config))
+    logger.debug(f"{discovery_topic} : {json.dumps(config)}")
 
     (result, mid) = client.publish(
         discovery_topic, json.dumps(config), retain=RTL_433_RETAIN
