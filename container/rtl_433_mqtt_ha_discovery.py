@@ -800,6 +800,8 @@ def run():
     else:
         logger.info("Discovering all devices.")
 
+    logger.info(f"RTL_433_RETAIN: {RTL_433_RETAIN}")
+
     client.loop_forever()
 
 
